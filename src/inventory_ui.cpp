@@ -464,6 +464,13 @@ inventory_column::entry_cell_cache_t inventory_column::make_entry_cell_cache(
     return result;
 }
 
+void inventory_column::refresh_entry_cell_caches() {
+    entries_cell_cache.clear();
+    for (size_t i = 0; i < entries.size(); ++i) {
+        entries_cell_cache.push_back(make_entry_cell_cache(entries[i])); 
+    }
+}
+
 const inventory_column::entry_cell_cache_t &inventory_column::get_entry_cell_cache(
     size_t index ) const
 {
@@ -719,6 +726,7 @@ void inventory_column::on_input( const inventory_input &input )
         if( !get_selected().locations.empty() ) {
             const item *loc = get_selected().any_item();
             set_stack_favorite( loc, !loc->is_favorite );
+            refresh_entry_cell_caches();
         }
     }
 }
@@ -2269,6 +2277,7 @@ drop_locations inventory_drop_selector::execute()
     // main multidrop selection loop
     int count = 0;
     while( true ) {
+        
         ui_manager::redraw();
 
         const inventory_input input = get_input();
