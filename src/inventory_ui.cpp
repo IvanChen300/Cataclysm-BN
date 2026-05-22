@@ -1776,6 +1776,7 @@ inventory_input inventory_selector::get_input()
     return res;
 }
 
+[[clang::optnone]]
 void inventory_selector::on_input( const inventory_input &input )
 {
     if( input.action == "CATEGORY_SELECTION" ) {
@@ -1791,9 +1792,6 @@ void inventory_selector::on_input( const inventory_input &input )
             }
         }
         refresh_active_column(); // Columns can react to actions by losing their activation capacity
-        if( input.action == "TOGGLE_FAVORITE" ) {
-            keep_open = true;
-        }
     }
 }
 
@@ -1960,10 +1958,6 @@ item *inventory_pick_selector::execute()
         } else {
             on_input( input );
         }
-
-        if( input.action == "TOGGLE_FAVORITE" ) {
-            return nullptr;
-        }
     }
 }
 
@@ -2065,8 +2059,6 @@ std::pair<const item *, const item *> inventory_compare_selector::execute()
             return std::make_pair( nullptr, nullptr );
         } else if( input.action == "INVENTORY_FILTER" ) {
             set_filter();
-        } else if( input.action == "TOGGLE_FAVORITE" ) {
-            // TODO: implement favoriting in multi selection menus while maintaining selection
         } else {
             on_input( input );
         }
@@ -2354,11 +2346,6 @@ drop_locations inventory_drop_selector::execute()
             return drop_locations();
         } else if( input.action == "INVENTORY_FILTER" ) {
             set_filter();
-        } else if( input.action == "TOGGLE_FAVORITE" ) {
-            // change the item favorited state
-            get_active_column().on_input( input );
-            this->keep_open = true;
-            return drop_locations();
         } else {
             on_input( input );
             count = 0;
